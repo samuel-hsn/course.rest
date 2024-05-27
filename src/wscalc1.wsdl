@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions name="wscalc1" targetNamespace="http://localhost:8000/wscalc1" xmlns="http://localhost:8000/wscalc1" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <wsdl:message name="divarRequest">
+    <wsdl:part name="a" type="xs:integer"/>
+    <wsdl:part name="b" type="xs:integer"/>
+  </wsdl:message>
+  <wsdl:message name="divarResponse">
+    <wsdl:part name="dirvarres" type="xs:integer"/>
+  </wsdl:message>
   <wsdl:message name="sumarRequest">
     <wsdl:part name="a" type="xs:integer"/>
     <wsdl:part name="b" type="xs:integer"/>
@@ -15,6 +22,10 @@
     <wsdl:part name="mulres" type="xs:integer"/>
   </wsdl:message>
   <wsdl:portType name="calcP">
+    <wsdl:operation name="divar">
+      <wsdl:input message="divarRequest"/>
+      <wsdl:output message="divarResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="sumar">
       <wsdl:input message="sumarRequest"/>
       <wsdl:output message="sumarResponse"/>
@@ -26,6 +37,15 @@
   </wsdl:portType>
   <wsdl:binding name="calcB" type="calcP">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="divar">
+    <soap:operation soapAction="divar"/>
+      <wsdl:input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="sumar">
       <soap:operation soapAction="sumar"/>
       <wsdl:input>
