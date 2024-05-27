@@ -21,6 +21,28 @@ const service = {
                 return {
                     res: n
                 };
+            },
+
+            divar: function (args) {
+                console.log('divar called');
+                console.log(args);
+                if(parseInt(args.b) === 0){
+                    throw  {
+                        Fault: {
+                            Code: {
+                                Value: "500",
+                                Subcode: { value: "b cannot be 0" }
+                            },
+                            Reason: { Text: "b cannot be 0" },
+                            Detail: { Text: "b cannot be 0" }
+                        }
+                    }
+                }else{
+                    var n = parseInt(args.a) / parseInt(args.b);
+                    return {
+                        res: n
+                    };
+                }
             }
         }
     }
