@@ -21,7 +21,15 @@ const service = {
                 return {
                     res: n
                 };
-            }
+            },
+            divar: function (args) {
+                console.log('divar called');
+                console.log(args);
+                var n = parseInt(args.a) / parseInt(args.b);
+                return {
+                    res: n
+                };
+            } 
         }
     }
 };  
