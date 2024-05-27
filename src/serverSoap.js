@@ -26,6 +26,19 @@ const service = {
                 console.log('divar called');
                 console.log(args);
 
+                if (parseInt(args.b) === 0) {
+                    throw {
+                        Fault: {
+                          Code: {
+                            Value: 'soap:Sender',
+                            Subcode: { value: 'rpc:BadArguments' }
+                          },
+                          Reason: { Text: 'b cannot be 0' },
+                          statusCode: 500
+                        }
+                      };
+                }
+
                 var n = parseInt(args.a) / parseInt(args.b);
                 return {
                     res: n
