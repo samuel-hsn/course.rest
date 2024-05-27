@@ -1,53 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="wscalc1" targetNamespace="http://localhost:8000/wscalc1" xmlns="http://localhost:8000/wscalc1" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<wsdl:definitions name="wscalc1" targetNamespace="http://localhost:8000/wscalc1"
+  xmlns="http://localhost:8000/wscalc1" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!--SUM-->
   <wsdl:message name="sumarRequest">
-    <wsdl:part name="a" type="xs:integer"/>
-    <wsdl:part name="b" type="xs:integer"/>
+    <wsdl:part name="a" type="xs:integer" />
+    <wsdl:part name="b" type="xs:integer" />
   </wsdl:message>
   <wsdl:message name="sumarResponse">
-    <wsdl:part name="sumres" type="xs:integer"/>
+    <wsdl:part name="sumres" type="xs:integer" />
   </wsdl:message>
+  <!--END SUM-->
+  <!--Multiplicar-->
   <wsdl:message name="multiplicarRequest">
-    <wsdl:part name="a" type="xs:integer"/>
-    <wsdl:part name="b" type="xs:integer"/>
+    <wsdl:part name="a" type="xs:integer" />
+    <wsdl:part name="b" type="xs:integer" />
   </wsdl:message>
   <wsdl:message name="multiplicarResponse">
-    <wsdl:part name="mulres" type="xs:integer"/>
+    <wsdl:part name="mulres" type="xs:integer" />
   </wsdl:message>
+  <!--END Multiplicar-->
+  <!--divar-->
+  <wsdl:message name="dividirRequest">
+    <wsdl:part name="a" type="xs:integer" />
+    <wsdl:part name="b" type="xs:integer" />
+  </wsdl:message>
+  <wsdl:message name="dividirResponse">
+    <wsdl:part name="divres" type="xs:integer" />
+  </wsdl:message>
+  <!--END divar-->
   <wsdl:portType name="calcP">
+    <!--SUM-->
     <wsdl:operation name="sumar">
-      <wsdl:input message="sumarRequest"/>
-      <wsdl:output message="sumarResponse"/>
+      <wsdl:input message="sumarRequest" />
+      <wsdl:output message="sumarResponse" />
     </wsdl:operation>
+    <!--SUM-->
+    <!--Multiplicar-->
     <wsdl:operation name="multiplicar">
-      <wsdl:input message="multiplicarRequest"/>
-      <wsdl:output message="multiplicarResponse"/>
+      <wsdl:input message="multiplicarRequest" />
+      <wsdl:output message="multiplicarResponse" />
     </wsdl:operation>
+    <!--Multiplicar-->
+    <!--divar-->
+    <wsdl:operation name="dividir">
+      <wsdl:input message="dividirRequest" />
+      <wsdl:output message="dividirResponse" />
+    </wsdl:operation>
+    <!--divar-->
   </wsdl:portType>
   <wsdl:binding name="calcB" type="calcP">
-    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+    <!--SUM-->
     <wsdl:operation name="sumar">
-      <soap:operation soapAction="sumar"/>
+      <soap:operation soapAction="sumar" />
       <wsdl:input>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
       </wsdl:input>
       <wsdl:output>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <!--END SUM-->
+    <!--multiplicar-->
     <wsdl:operation name="multiplicar">
-      <soap:operation soapAction="multiplicar"/>
+      <soap:operation soapAction="multiplicar" />
       <wsdl:input>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
       </wsdl:input>
       <wsdl:output>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <!--END Multiplicar-->
+    <!--divar-->
+    <wsdl:operation name="dividir">
+      <soap:operation soapAction="dividir" />
+      <wsdl:input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <!--END divar-->
   </wsdl:binding>
   <wsdl:service name="ws">
     <wsdl:port binding="calcB" name="calc">
-      <soap:address location="http://localhost:8000/wscalc1"/>
+      <soap:address location="http://localhost:8000/wscalc1" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
