@@ -26,9 +26,18 @@ describe("Places/controller", () => {
       });
   });
 
-  //TODO Ajouter ici le test qui vérifie le nombre de place remonté par l'api
+  it('GET /api/places should respond a http 200 OK with right amount of places', () => {
+    const app = new App(new Place(new PlaceData())).app;
+    return request(app)
+        .get('/api/places')
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(response => {
+            expect(response.body.length).toBe(3);
+        });
+});
 
-  /*it('POST /api/places should respond a http 201 OK with no image', () => {
+  it('POST /api/places should respond a http 201 OK with no image', () => {
         var newPlace = {
             name: 'Londre',
             author: 'Patrick',
@@ -96,5 +105,5 @@ describe("Places/controller", () => {
             .expect('Content-Type', /json/)
             .expect(400);
 
-    });*/
+    });
 });
