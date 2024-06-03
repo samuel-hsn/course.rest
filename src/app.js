@@ -13,6 +13,7 @@ class App {
 
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
+            response.setHeader('Content-Type', 'application/json');
 
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
@@ -27,6 +28,12 @@ class App {
         app.get('/api/version', function (request, response) {
             response.json({
                 version: packageJson.version
+            });
+        });
+        
+        app.get('*', function (request, response) {
+            response.json({
+                key: 'route.not.found'
             });
         });
 

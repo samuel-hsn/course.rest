@@ -4,31 +4,42 @@ const PlaceData = require("./data");
 const Place = require("./controller");
 
 describe("Places/controller", () => {
-  it("GET /api/places/2 should respond a http 200 OK", () => {
-    const app = new App(new Place(new PlaceData())).app;
-    return request(app)
-      .get("/api/places/2")
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .then(response => {
-        expect(response.body.author).toBe("Louis");
-      });
-  });
+    it("GET /api/places/2 should respond a http 200 OK", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places/2")
+            .expect("Content-Type", /json/)
+            .expect(200)
+            .then(response => {
+                expect(response.body.author).toBe("Louis");
+            });
+    });
 
-  it("GET /api/places/youhou should respond a http 404", () => {
-    const app = new App(new Place(new PlaceData())).app;
-    return request(app)
-      .get("/api/places/youhou")
-      .expect("Content-Type", /json/)
-      .expect(404)
-      .expect(response => {
-        expect(response.body.key).toBe("entity.not.found");
-      });
-  });
+    it("GET /api/places/youhou should respond a http 404", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places/youhou")
+            .expect("Content-Type", /json/)
+            .expect(404)
+            .expect(response => {
+                expect(response.body.key).toBe("entity.not.found");
+            });
+    });
 
-  //TODO Ajouter ici le test qui vérifie le nombre de place remonté par l'api
+    //TODO Ajouter ici le test qui vérifie le nombre de place remonté par l'api
 
-  /*it('POST /api/places should respond a http 201 OK with no image', () => {
+    it("GET /api/places should respond a http 200 OK  whith the right number of places", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places")
+            .expect("Content-Type", /json/)
+            .expect(200)
+            .then(response => {
+                expect(response.body.length).toBe(3);
+            });
+    });
+
+    it('POST /api/places should respond a http 201 OK with no image', () => {
         var newPlace = {
             name: 'Londre',
             author: 'Patrick',
@@ -96,5 +107,5 @@ describe("Places/controller", () => {
             .expect('Content-Type', /json/)
             .expect(400);
 
-    });*/
+    });
 });
