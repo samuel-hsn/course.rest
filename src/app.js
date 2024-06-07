@@ -13,6 +13,7 @@ class App {
 
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
+            response.setHeader('Content-Type', 'application/json');
 
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
@@ -21,7 +22,7 @@ class App {
             next();
         };
         app.use(middlewareHttp);
-
+        
         place.configure(app);
 
         app.get('/api/version', function (request, response) {
@@ -29,6 +30,13 @@ class App {
                 version: packageJson.version
             });
         });
+
+        app.get('/api/*', function (request, response) {
+            response.status(404).json({
+                key: 'not.found'
+            });
+        });
+        
 
         // eslint-disable-next-line no-unused-vars
         app.use(function (error, request, response, next) {
