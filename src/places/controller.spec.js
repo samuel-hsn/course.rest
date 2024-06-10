@@ -108,4 +108,93 @@ describe("Places/controller", () => {
             .expect(400);
 
     });
+
+    //Tester réussite suppression place
+    it('DELETE /api/places/2 should respond a http 200 OK', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/2')
+            .expect(200)
+            .then(response => {
+                expect(response.body.response).toBe('Object succesfully deleted');
+            });
+    });
+
+    //Tester échec suppression place
+    it('DELETE /api/places/10 should respond a http 404', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/10')
+            .expect('Content-Type', /json/)
+            .expect(404)
+            .expect(response => {
+                expect(response.body.error).toBe('Place not found');
+            });
+    });
+
+    //Teste remplacer place succes
+    it('PUT /api/places should respond a http 201 OK with an image', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        // Définir les nouvelles valeurs pour la place
+        const newPlace = {
+            name: 'Paris',
+            author: 'Pierre',
+            review: 5,
+            image: {
+                url: 'https://example.com/image.png',
+                title: 'A nice place'
+            }
+        };
+
+        // Envoyer la requête de remplacement de la place
+        const response =  request(app)
+            .put(`/api/places/1`)
+            .send(newPlace)
+            .expect('Content-Type', /json/)
+            .expect(200);
+    });
+
+    //Teste remplacer mais pas le bon format
+    it('PUT /api/places should respond a http 404 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+
+        const newPlace = {
+            name: 'Paris',
+            author: 'Pièrre',
+            review: 5,
+            image: {
+                url: 'https://example.com/image.png',
+                title: 'A nice place'
+            }
+        };
+
+        const response =  request(app)
+        .put(`/api/places/1`)
+        .send({})
+        .expect('Content-Type', /json/)
+        .expect(400);
+        
+    });
+
+    it('PUT /api/places should respond a http 404 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+
+        const newPlace = {
+            name: 'Paris',
+            author: 'Pierre',
+            review: 5,
+            image: {
+                url: 'https://example.com/image.png',
+                title: 'A nice place'
+            }
+        };
+
+        const response =  request(app)
+        .put(`/api/places/66`)
+        .send(newPlace)
+        .expect('Content-Type', /json/)
+        .expect(404);
+        
+    });
+
 });
