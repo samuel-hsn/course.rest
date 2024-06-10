@@ -11,11 +11,14 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "4.17.1",
+    "fast-json-patch": "^3.1.1",
+    "jsonschema": "^1.4.1",
     "uuid": "8.3.2"
   },
   "devDependencies": {
     "jest": "27.5.1",
-    "nodemon": "2.0.15"
+    "nodemon": "2.0.15",
+    "supertest": "^7.0.0"
   },
   "main": "src/server.js",
   "license": "ISC"
