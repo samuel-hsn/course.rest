@@ -13,6 +13,7 @@ class App {
 
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
+            response.setHeader('Content-Type', 'application/json');
 
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
@@ -20,6 +21,8 @@ class App {
             }
             next();
         };
+
+        
         app.use(middlewareHttp);
 
         place.configure(app);
@@ -30,6 +33,14 @@ class App {
             });
         });
 
+        
+        var NotFoundMiddleware = function (request, response, next) {
+            response.status(404).json({
+                key: 'not.found'
+            });
+        }
+        app.use(NotFoundMiddleware);
+        this.app=app;
         // eslint-disable-next-line no-unused-vars
         app.use(function (error, request, response, next) {
             console.error(error.stack);
@@ -39,6 +50,8 @@ class App {
         });
         this.app=app;
     }
+    
 }
 
 module.exports = App;
+

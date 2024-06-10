@@ -16,6 +16,7 @@ function _saveAsync(data, _data) {
   return waitAsync();
 }
 
+
 class Data {
   constructor() {
     this._data = cloneJsonData;
