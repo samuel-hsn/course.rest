@@ -1,6 +1,28 @@
 const _ = require("lodash");
 const { v1: uuidv1 } = require("uuid");
 const jsonData = require("./data.json");
+const { Validator } = require('jsonschema');
+const jsonpatch = require('fast-json-patch');
+
+const placeSchema = {
+  "id": "/Place",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "url": {"type": "string",  "pattern": "(https|http):?:\/\/.*"},
+        "title": {"type": "string", "minLength": 3, "maxLength": 100}
+      },
+      "required": ["url", "title"]
+    },
+    "author": {"type": "string", "minLength": 3, "maxLength": 100, "pattern": "^[a-zA-Z -]*$"},
+    "review": {"type": "integer", "minimum": 1, "maximum": 9},
+    "name": {"type": "string", "minLength": 3, "maxLength": 100, "pattern": "^[a-zA-Z -]*$"}
+  },
+  "required": ["author", "review", "name"]
+};
+
 
 const cloneJsonData = _.cloneDeep(jsonData);
 
@@ -19,6 +41,8 @@ function _saveAsync(data, _data) {
 class Data {
   constructor() {
     this._data = cloneJsonData;
+    this.validator = new Validator();
+    this.validator.addSchema(placeSchema, '/Place');
   }
 
   async getPlacesAsync() {
@@ -36,6 +60,12 @@ class Data {
   }
 
   async savePlaceAsync(place) {
+
+    const validationResult = this.validator.validate(place, placeSchema);
+    if (!validationResult.valid) {
+      throw new Error("Validation error: " + validationResult.errors.map(err => err.stack).join(", "));
+    }
+    
     const data = await _loadAsync(this._data);
     const places = data.places;
     let id;

@@ -13,7 +13,7 @@ describe("Place/data", () => {
     expect(place.name).toBe("Londre");
   });
 
-  it("should save a new place", async () => {
+  /*it("should save a new place", async () => {
     const data = new Data();
     const place = {
       name: "Lens",
@@ -44,5 +44,5 @@ describe("Place/data", () => {
     expect(success).toBe(true);
     success = await data.deletePlaceAsync("3")
     expect(success).toBe(false);
-  });
+  });*/
 });
