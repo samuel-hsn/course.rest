@@ -26,6 +26,17 @@ describe("Places/controller", () => {
       });
   });
 
+  it("GET /api/places/404 should respond a http 404", () => {
+    const app = new App(new Place(new PlaceData())).app;
+    return request(app)
+      .get("/api/places/404")
+      .expect("Content-Type", /json/)
+      .expect(404)
+      .expect(response => {
+        expect(response.body.key).toBe("entity.not.found");
+      });
+  });
+
   it('GET /api/places should respond a http 200 OK with right amount of places', () => {
     const app = new App(new Place(new PlaceData())).app;
     return request(app)
@@ -123,6 +134,42 @@ describe("Places/controller", () => {
             .then(response => {
                 expect(response.body.error).toBe("Place not found");
             });;
+    });
+
+    it('PUT /api/places/1 should respond a http 204 OK - No Content', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var newPlace = {
+            name: 'Verdun',
+            author: 'Jean Frere',
+            review: 5,
+            image: {
+                url: 'https://imgs.search.brave.com/DqGcsUJW2p3ZB8YQt-21eKOcGK_MFWx14KAaZly_KBU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTU3/MzI4ODIwL3Bob3Rv/L3ZlcmR1bi1taWxp/dGFyeS1tdXNsaW0t/Y2VtZXRlcnktZnJh/bmNlLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1UZGRVV09u/WWFlWjFRdldlVUxz/XzNpRHkzQTBBRnNO/WVVVV1kyUlRMOVFN/PQ',
+                title: 'Verdun cimetierre'
+            }
+        };
+        return request(app)
+            .put('/api/places/1')
+            .send(newPlace)
+            .expect('Location', '/api/places/1')
+            .expect(204);
+    });
+
+    it('PUT /api/places/20 should respond a http 201 Created', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var newPlace = {
+            name: 'Verdun',
+            author: 'Jean Frere',
+            review: 5,
+            image: {
+                url: 'https://imgs.search.brave.com/DqGcsUJW2p3ZB8YQt-21eKOcGK_MFWx14KAaZly_KBU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTU3/MzI4ODIwL3Bob3Rv/L3ZlcmR1bi1taWxp/dGFyeS1tdXNsaW0t/Y2VtZXRlcnktZnJh/bmNlLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1UZGRVV09u/WWFlWjFRdldlVUxz/XzNpRHkzQTBBRnNO/WVVVV1kyUlRMOVFN/PQ',
+                title: 'Verdun cimetierre'
+            }
+        };
+        return request(app)
+            .put('/api/places/20')
+            .send(newPlace)
+            .expect('Location', '/api/places/20')
+            .expect(201);
     });
     
 });
