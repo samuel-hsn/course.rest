@@ -106,4 +106,23 @@ describe("Places/controller", () => {
             .expect(400);
 
     });
+
+    it('DELETE /api/places/1 should respond a http 200 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/1')
+            .expect('Location', /places/)
+            .expect(200);
+    });
+    it('DELETE /api/places/0 should respond a http 404 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/0')
+            .expect('Content-Type', /json/)
+            .expect(404)
+            .then(response => {
+                expect(response.body.error).toBe("Place not found");
+            });;
+    });
+    
 });
