@@ -13,6 +13,7 @@ class App {
 
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
+            response.setHeader('Content-Type', 'application/json'); // Ajout de l'en-tête Content-Type
 
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
@@ -35,6 +36,12 @@ class App {
             console.error(error.stack);
             response.status(500).json({
                 key: 'server.error'
+            });
+        });
+
+        app.use(function (request, response, next) {
+            response.status(404).json({
+                key: 'not found'
             });
         });
         this.app=app;
