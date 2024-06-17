@@ -1,5 +1,6 @@
 const jsonpatch = require('fast-json-patch');
 
+
 class Places {
   constructor(data) {
     this.data = data;
@@ -13,6 +14,31 @@ class Places {
       response.status(200).json(places);
     });    
 
+
+    app.get('/api/places/list/char', async (request, response) => {
+      const { name } = request.query;
+    
+      if (!name) {
+        return response.status(400).json({ error: 'Le paramètre de requête "name" est requis.' });
+      }
+    
+      try {
+        // Récupérer toutes les places
+        const places = await data.getPlacesAsync();
+    
+        // Filtrer les places dont le nom contient la chaîne spécifiée (insensible à la casse)
+        const filteredPlaces = places.filter(place => {
+          const regex = new RegExp(name, 'i');
+          return regex.test(place.name);
+        });
+    
+        response.status(200).json(filteredPlaces);
+      } catch (error) {
+        console.error('Erreur lors du filtrage des places :', error);
+        response.status(500).json({ error: 'Erreur serveur lors du filtrage des places.' });
+      }
+    });
+    
     app.get("/api/places/all", async (request, response) => {
       const places = await data.getPlacesAsync();
       response.status(200).json(places.length);
@@ -83,15 +109,16 @@ class Places {
       }
     });
     
-    app.patch("/api/places/:id", async (request, response) => {
+   app.patch("/api/places/:id", async (request, response) => {
       try {
-        const placeId = request.params.id;
-        const patches = request.body;     
-    
+        let placeId = request.params.id;
+        const patches = request.body;    
+
+
         const existingPlace = await data.getPlaceAsync(placeId);
-    
+
         if (!existingPlace) {
-          return response.status(404).json({ key: "entity.not.found" });
+          return response.status(404).header('Content-Type', 'application/json-patch+json').json({ key: "entity.not.found" });
         }
     
         // Utiliser JsonPatch pour mettre à jour les propriétés
@@ -101,13 +128,13 @@ class Places {
           delete updatedPlace.image;
         }
         // Valider les données mises à jour
-    
         await data.savePlaceAsync(updatedPlace);
-        response.status(200).json({ id: placeId });
+        response.status(200).header('Content-Type', 'application/json-patch+json').json({id : placeId});
       } catch (err) {
-        response.status(400).json({ error: err.message });
+        response.status(400).header('Content-Type', 'application/json-patch+json').json({ error: err.message });
       }
     });
+    
   }
 }
 module.exports = Places;

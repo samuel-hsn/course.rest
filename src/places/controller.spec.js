@@ -215,7 +215,7 @@ describe("Places/controller", () => {
         return request(app)
           .patch(`/api/places/${id}`)
           .send(patches)
-          .expect('Content-Type', /json/)
+          .expect('Content-Type', /application\/json-patch\+json/)
           .expect(200)
           .expect(response => {
             expect(response.body.id).toBe("1");
@@ -233,7 +233,7 @@ describe("Places/controller", () => {
         return request(app)
           .patch(`/api/places/${id}`)
           .send(patches)
-          .expect('Content-Type', /json/)
+          .expect('Content-Type', /application\/json-patch\+json/)
           .expect(400)
           .expect(response => {
             expect(typeof response.body.error).toBe('string');
@@ -250,10 +250,43 @@ describe("Places/controller", () => {
         return request(app)
           .patch(`/api/places/999`)
           .send(patches)
-          .expect('Content-Type', /json/)
+          .expect('Content-Type', /application\/json-patch\+json/)
           .expect(404)
           .expect(response => {
             expect(response.body.key).toBe('entity.not.found');
           });
       });
+
+      it('GET http://localhost:8081/api/places/list/char?name=gan should respond with 200 for existent place', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+          .get(`/api/places/list/char?name=gan`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .expect(response => {
+            expect(response.body).toEqual([{
+              id: '3',
+              name: 'Ploufragan',
+              author: 'Guillaume',
+              review: 3,
+              image: {
+                title: 'Lieu naturel',
+                url: 'http://localhost:8081/api/files/7577fcc0-0580-11e7-a2b8-5dcb02604871_hackathon.PNG'
+              }
+            }]);
+          });
+      });
+
+      it('GET http://localhost:8081/api/places/list/char?name=gan should respond with 200 for existent place', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+          .get(`/api/places/list/char?name=ganfefefefefeffef`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .expect(response => {
+            expect(response.body).toEqual([]);
+          });
+      });
+
+      
 });
