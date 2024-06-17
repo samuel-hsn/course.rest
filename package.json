@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "jest": "27.5.1",
-    "nodemon": "2.0.15"
+    "nodemon": "^2.0.15"
   },
   "main": "src/server.js",
   "license": "ISC"

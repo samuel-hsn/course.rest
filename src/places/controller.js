@@ -15,12 +15,13 @@ class Places {
         "type": "object",
         "properties": {
           "image": {
-            "type": "object",
+            "type": ["object","null"],
             "properties": {
               "url": {"type": "string",  "pattern": "(https|http):?:\/\/.*"},
               "title": {"type": "string", "minLength": 3, "maxLength": 100}
             },
             "required": ["url", "title"]
+            
           },
           "author": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'},
           "review": {"type": "integer", "minimum": 1, "maximum": 9},
@@ -98,7 +99,7 @@ class Places {
     //Requête PATCH qui permet de modifier PARTEILLEMENT une place en fonction de son id
     app.patch("/api/places/:id", async (request, response) => {
       let id = request.params.id;
-      
+      const patch = request.body;
       //place inexistant
       const placeOld = await data.getPlaceAsync(id);
       if(placeOld === undefined){
@@ -110,19 +111,22 @@ class Places {
       var key;
       var place;
       if(request.is("application/json-patch+json")==="application/json-patch+json"){
-      //   key="entity.updated.jsonpatch";
+        if (!Array.isArray(patch)){
+          response.status(400).json({key: "invalid.data"});
+          return;
+        }
+        key="entity.updated.jsonpatch";
         
-      //   var patch = request.body;
-      //   place = jsonpatch.applyPatch(placeOld, patch).newDocument;
+        place = jsonpatch.applyPatch(placeOld, patch).newDocument;
 
       } 
       else {
         key="entity.updated";
-        // if (Array.isArray(request.body)){
-        //   response.status(400).json({key: "invalid.data"});
-        //   return;
-        // }
-        place = Object.assign(placeOld,request.body);
+        if (Array.isArray(patch)){
+          response.status(400).json({key: "invalid.data"});
+          return;
+        }
+        place = Object.assign(placeOld,patch);
         
       }
       //place.id = id;
@@ -130,7 +134,7 @@ class Places {
       var result = v.validate(place, placeSchema);
       //données invalides
       if (result.errors.length > 0) {
-        response.status(400).json({key: "invalid.data"});
+        response.status(400).json({key: "invalid.data",place:place});
         return;
       }
       const res = await data.savePlaceAsync(place);
