@@ -2,8 +2,10 @@ const App = require("./app");
 
 const PlaceData = require("./places/data");
 const Places = require("./places/controller");
+const Files = require("./files/controller");
 const places = new Places(new PlaceData());
-const app = new App(places).app;
+const files = new Files();
+const app = new App(places, files).app;
 
 var server = app.listen(8081, function() {
   var host = server.address().address;
