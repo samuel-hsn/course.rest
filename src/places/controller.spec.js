@@ -154,7 +154,7 @@ describe("Places/controller", () => {
             .put('/api/places/2')
             .send(newPlace)
             .expect('Location', /places/)
-            .expect(204);
+            .expect(200);
     });
 
     it('PUT /api/places/:id should respond a http 204 OK with an image', () => {
@@ -173,7 +173,7 @@ describe("Places/controller", () => {
             .put('/api/places/2')
             .send(newPlace)
             .expect('Location', /places/)
-            .expect(204);
+            .expect(200);
 
     });
 
@@ -239,7 +239,7 @@ describe("Places/controller", () => {
             .patch('/api/places/2')
             .send(newPlace)
             .expect('Location', /places/)
-            .expect(204);
+            .expect(200);
     });
 
     it('PATCH /api/places/:id should respond a http 204 OK with an image', () => {
@@ -256,7 +256,7 @@ describe("Places/controller", () => {
             .patch('/api/places/2')
             .send(newPlace)
             .expect('Location', /places/)
-            .expect(204);
+            .expect(200);
 
     });
 

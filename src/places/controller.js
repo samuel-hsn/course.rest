@@ -1,4 +1,5 @@
 const { Validator } = require('jsonschema');
+const jsonpatch = require('fast-json-patch');
 
 class Places {
   constructor(data) {
@@ -18,9 +19,22 @@ class Places {
     });
 
     app.get("/api/places", async (request, response) => {
-      const place = await data.getPlacesAsync();
-      if (place !== undefined) {
-        response.status(200).json(place.length);
+      const queryName = request.query.name;
+      const places = await data.getPlacesAsync();
+
+      if (places !== undefined) {
+        if (queryName) {
+          const regex = new RegExp(queryName, 'i');
+          const tabPlaceByName = [];
+          for (const place of places) {
+            if (regex.test(place.name)){
+              tabPlaceByName.push(place);
+            }
+          }
+          response.status(200).json(tabPlaceByName);
+        } else {
+          response.status(200).json(places.length);
+        }
         return;
       }
       response.status(404).json({key: "entity.not.found"});
@@ -83,7 +97,6 @@ class Places {
     app.put("/api/places/:id", async (request, response) => {
       let id = request.params.id;
       let newPlace = request.body;
-
       const placeById = await data.getPlaceAsync(id);
 
       //la place ayant cette Id n'a pas été trouvé
@@ -129,7 +142,7 @@ class Places {
       newPlace.id = id;
       id = await data.savePlaceAsync(newPlace);
       response.setHeader("Location", `http://localhost:8081/places/${id}`);
-      response.status(204).json();
+      response.status(200).json(newPlace);
     });
 
     app.patch("/api/places/:id", async (request, response) => {
@@ -137,15 +150,19 @@ class Places {
       let informationAModifier = request.body;
 
       const placeById = await data.getPlaceAsync(id);
-      console.log(placeById);
+
       //la place ayant cette Id n'a pas été trouvé
       if (placeById === undefined) {
         response.status(404).json({ key: "entity.not.found" });
         return;
       }
       
+      //Patch avec json
       let newPlace = Object.assign(placeById,informationAModifier);
 
+      //Patch avec jsonpatch
+      //let newPlace = jsonpatch.applyPatch(placeById, informationAModifier).newDocument;
+  
       // Schéma de validation pour un objet place
       var placeSchema = {
         "id": "/Place",
@@ -190,7 +207,7 @@ class Places {
       newPlace.id = id;
       id = await data.savePlaceAsync(newPlace);
       response.setHeader("Location", `http://localhost:8081/places/${id}`);
-      response.status(204).json();
+      response.status(200).json(newPlace);
     });
   }
 }
