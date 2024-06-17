@@ -1,3 +1,5 @@
+const jsonpatch = require('fast-json-patch');
+
 class Places {
   constructor(data) {
     this.data = data;
@@ -74,26 +76,88 @@ class Places {
     });
 
     //Remplacer une place en utilisant la méthode PUT
+    /*app.put('/api/places/:id', async (request, response) => {
+      const { id } = request.params;
+      const placeData = request.body;
+      const validationResult = v.validate(placeData, placeSchema);
+
+      if (validationResult.errors.length > 0) {
+        return response.status(400).json({
+          errors: validationResult.errors.map(error => error.stack)
+        });
+      }
+
+      const existingPlace = await data.getPlaceAsync(id);
+      if (existingPlace !== undefined) {
+        placeData.id = id; // Assurez-vous que l'ID est correctement assigné
+        await data.savePlaceAsync(placeData);
+        response.status(200).json({ message: 'Place updated' });
+      } else {
+        response.status(404).json({ error: 'Place not found' });
+      }
+    });*/
+
     app.put('/api/places/:id', async (request, response) => {
-        
-        const { id } = request.params;
-        const placeData = request.body;
-        const validationResult = v.validate(placeData, placeSchema);
-      
+      const PlaceId = request.params.id;
+      const updatedPlace = request.body;
+
+      updatedPlace.id = PlaceId.toString();
+      const existingPlace = await data.getPlaceAsync(PlaceId);
+      if (existingPlace !== undefined) {
+        // Utiliser Object.assign pour mettre à jour uniquement les propriétés spécifiées
+        const mergePlace = Object.assign(existingPlace, updatedPlace);
+        if (mergePlace.image === null) {
+          delete mergePlace.image;
+        }
+
+        const validationResult = v.validate(mergePlace, placeSchema);
         if (validationResult.errors.length > 0) {
           return response.status(400).json({
             errors: validationResult.errors.map(error => error.stack)
           });
         }
-        
-        if(await data.getPlaceAsync(id) !== undefined) {
-          this.data.savePlaceAsync(placeData);
-          response.status(200).json({ message : 'Place updated' });
-        }
-        else {
-          response.status(404).json({ error: 'Place not found' });
-        }
+
+        await data.savePlaceAsync(mergePlace);
+        response.status(200).json(mergePlace);
+      } else {
+        response.status(404).json({ error: 'Place not found' });
+      }
     });
+
+    app.patch('/api/places/:id', async (request, response) => {
+
+        let placeId = request.params.id;
+        const patches = request.body;
+
+        const existingPlace = await data.getPlaceAsync(placeId);
+
+        if (existingPlace !== undefined) {
+
+        // Utiliser JsonPatch pour mettre à jour les propriétés
+        const updatedPlace = jsonpatch.applyPatch(existingPlace, patches).newDocument;
+
+        if (updatedPlace.image === null) {
+          delete updatedPlace.image;
+        }
+
+        const validationResult = v.validate(updatedPlace, placeSchema);
+        if (validationResult.errors.length > 0) {
+          return response.status(400).json({
+            errors: validationResult.errors.map(error => error.stack)
+          });
+        }
+
+        // Valider les données mises à jour
+        await data.savePlaceAsync(updatedPlace);
+        response.status(200).json(updatedPlace);
+        return;
+      }else {
+        response.status(400).json({ error: 'Place not found' });
+      }
+      });
+
+
+
   }
 }
 module.exports = Places;

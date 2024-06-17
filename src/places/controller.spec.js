@@ -147,7 +147,7 @@ describe("Places/controller", () => {
         };
 
         // Envoyer la requête de remplacement de la place
-        const response =  request(app)
+        const response = request(app)
             .put(`/api/places/1`)
             .send(newPlace)
             .expect('Content-Type', /json/)
@@ -168,12 +168,12 @@ describe("Places/controller", () => {
             }
         };
 
-        const response =  request(app)
-        .put(`/api/places/1`)
-        .send({})
-        .expect('Content-Type', /json/)
-        .expect(400);
-        
+        const response = request(app)
+            .put(`/api/places/1`)
+            .send({})
+            .expect('Content-Type', /json/)
+            .expect(400);
+
     });
 
     it('PUT /api/places should respond a http 404 KO', () => {
@@ -189,12 +189,97 @@ describe("Places/controller", () => {
             }
         };
 
-        const response =  request(app)
-        .put(`/api/places/66`)
-        .send(newPlace)
-        .expect('Content-Type', /json/)
-        .expect(404);
-        
+        const response = request(app)
+            .put(`/api/places/66`)
+            .send(newPlace)
+            .expect('Content-Type', /json/)
+            .expect(404);
+
     });
+
+    //Partie 12
+    // Cas 1 : Place trouvée et données valides
+    it('PUT /api/places/:id should replace a place with valid data', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        const updatedPlace = {
+            id: "1",
+            name: 'Paris Updated',
+            author: 'Jean Updated',
+            review: 8
+        };
+        return request(app)
+            .put(`/api/places/1`)
+            .send(updatedPlace)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect(response => {
+                expect(response.body.id).toBe("1");
+            });
+    });
+
+    // Cas 2 : Place trouvée et données non valides
+    it('PUT /api/places/:id should respond with 400 for invalid data', () => {
+        const invalidPlace = {
+            id: "1",
+            name: 'Pa', // Invalid name
+            author: 'J', // Invalid author
+            review: 20 // Invalid review
+        };
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .put(`/api/places/1`)
+            .send(invalidPlace)
+            .expect('Content-Type', /json/)
+            .expect(400)
+    });
+
+    // Cas 3 : Place non trouvée
+    it('PUT /api/places/:id should respond with 404 for non-existent place', () => {
+        const updatedPlace = {
+            name: 'NonExistent Place',
+            author: 'NonExistent Author',
+            review: 5
+        };
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .put(`/api/places/999`)
+            .send(updatedPlace)
+            .expect('Content-Type', /json/)
+            .expect(404)
+    });
+
+    // Cas 4 : Mise à jour partielle de la place
+    it('PUT /api/places/:id should update only specified properties', () => {
+        const partialUpdate = {
+            id: "1",
+            name: 'Paris Partially Updated'
+        };
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .put(`/api/places/1`)
+            .send(partialUpdate)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect(response => {
+                expect(response.body.id).toBe("1");
+            });
+    });
+
+    //Partie 13 : Utilisation de Patch 
+    it('Patch /api/places/2 should update only specified properties', async () => {
+        const app = new App(new Place(new PlaceData())).app;
+    
+        const patchData = [
+            { "op": "replace", "path": "/name", "value": "Saint-brieuc" },
+            { "op": "replace", "path": "/author", "value": "Robert" }
+        ];
+    
+        await request(app)
+          .patch('/api/places/1')
+          .set('Content-Type', 'application/json-patch+json')
+          .send(patchData)
+          .expect('Content-Type', /json/)
+          .expect(200)
+      });
 
 });
