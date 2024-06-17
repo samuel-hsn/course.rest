@@ -2,10 +2,11 @@ const request = require("supertest");
 const App = require("../app");
 const PlaceData = require("./data");
 const Place = require("./controller");
+const Files = require("../files/controller");
 
 describe("Places/controller", () => {
   it("GET /api/places/2 should respond a http 200 OK", () => {
-    const app = new App(new Place(new PlaceData())).app;
+    const app = new App(new Place(new PlaceData()), new Files()).app;
     return request(app)
       .get("/api/places/2")
       .expect("Content-Type", /json/)
@@ -15,7 +16,7 @@ describe("Places/controller", () => {
       });
   });
   it("GET /api/places/1 should respond a http 200 OK", () => {
-    const app = new App(new Place(new PlaceData())).app;
+    const app = new App(new Place(new PlaceData()), new Files()).app;
     return request(app)
       .get("/api/places/1")
       .expect("Content-Type", /json/)
@@ -26,7 +27,7 @@ describe("Places/controller", () => {
   });
 
   it("GET /api/places/youhou should respond a http 404", () => {
-    const app = new App(new Place(new PlaceData())).app;
+    const app = new App(new Place(new PlaceData()), new Files()).app;
     return request(app)
       .get("/api/places/youhou")
       .expect("Content-Type", /json/)
@@ -37,7 +38,7 @@ describe("Places/controller", () => {
   });
 
   it("GET /api/places/404 should respond a http 404", () => {
-    const app = new App(new Place(new PlaceData())).app;
+    const app = new App(new Place(new PlaceData()), new Files()).app;
     return request(app)
       .get("/api/places/404")
       .expect("Content-Type", /json/)
@@ -48,7 +49,7 @@ describe("Places/controller", () => {
   });
 
   it('GET /api/places should respond a http 200 OK with right amount of places', () => {
-    const app = new App(new Place(new PlaceData())).app;
+    const app = new App(new Place(new PlaceData()), new Files()).app;
     return request(app)
         .get('/api/places')
         .expect("Content-Type", /json/)
@@ -64,7 +65,7 @@ describe("Places/controller", () => {
             author: 'Patrick',
             review: 2
         };
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         return request(app)
             .post('/api/places')
             .send(newPlace)
@@ -83,7 +84,7 @@ describe("Places/controller", () => {
                 title: 'bworld place'
             }
         };
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         return request(app)
             .post('/api/places')
             .send(newPlace)
@@ -99,7 +100,7 @@ describe("Places/controller", () => {
             author: 'Pat',
             review: 2
         };
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         return request(app)
             .post('/api/places')
             .send(newPlace)
@@ -110,7 +111,7 @@ describe("Places/controller", () => {
 
     it('POST /api/places should respond a http 400 KO', () => {
 
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var newPlace = {
             name: 'Londre &',
             author: 'Patrickmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm',
@@ -129,7 +130,7 @@ describe("Places/controller", () => {
     });
 
     it('PUT /api/places/1 should respond a http 204 OK - No Content', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var newPlace = {
             name: 'Verdun',
             author: 'Jean Frere',
@@ -147,7 +148,7 @@ describe("Places/controller", () => {
     });
 
     it('PUT /api/places/20 should respond a http 201 Created', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var newPlace = {
             name: 'Verdun',
             author: 'Jean Frere',
@@ -165,7 +166,7 @@ describe("Places/controller", () => {
     });
 
     it('PATCH /api/places/3 should respond a http 204 OK - No content', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var patchedPlace = {
             name: 'Paris',
         };
@@ -178,7 +179,7 @@ describe("Places/controller", () => {
 
 
     it('PATCH /api/places/15 should respond a http 404 Not Found', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var patchedPlace = {
             name: 'Paris',
         };
@@ -190,7 +191,7 @@ describe("Places/controller", () => {
     });
 
     it('PATCH /api/places/3 should respond a http 400 KO with bad property name', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var patchedPlace = {
             naem: 'Paris',
         };
@@ -202,7 +203,7 @@ describe("Places/controller", () => {
     });
 
     it('PATCH /api/places/2 should respond a http 204', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         var body = [
             { "op": "replace", "path": "/name", "value": "Saint-brieuc" },
             { "op": "replace", "path": "/author", "value": "Robert" }
@@ -215,14 +216,14 @@ describe("Places/controller", () => {
     
 
     it('DELETE /api/places/1 should respond a http 200 KO', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         return request(app)
             .delete('/api/places/1')
             .expect('Location', /places/)
             .expect(200);
     });
     it('DELETE /api/places/0 should respond a http 404 KO', () => {
-        const app = new App(new Place(new PlaceData())).app;
+        const app = new App(new Place(new PlaceData()), new Files()).app;
         return request(app)
             .delete('/api/places/0')
             .expect('Content-Type', /json/)
