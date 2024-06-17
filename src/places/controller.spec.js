@@ -163,6 +163,43 @@ describe("Places/controller", () => {
             .expect('Location', '/api/places/20')
             .expect(201);
     });
+
+    it('PATCH /api/places/3 should respond a http 204 OK - No content', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var patchedPlace = {
+            name: 'Paris',
+        };
+        return request(app)
+            .patch('/api/places/3')
+            .send(patchedPlace)
+            .expect('Location', '/api/places/3')
+            .expect(204);
+    });
+
+
+    it('PATCH /api/places/15 should respond a http 404 Not Found', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var patchedPlace = {
+            name: 'Paris',
+        };
+        return request(app)
+            .patch('/api/places/15')
+            .send(patchedPlace)
+            .expect('Content-Type', /json/)
+            .expect(404);
+    });
+
+    it('PATCH /api/places/3 should respond a http 400 KO with bad property name', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var patchedPlace = {
+            naem: 'Paris',
+        };
+        return request(app)
+            .patch('/api/places/3')
+            .send(patchedPlace)
+            .expect('Content-Type', /json/)
+            .expect(400);
+    });
     
 
     it('DELETE /api/places/1 should respond a http 200 KO', () => {

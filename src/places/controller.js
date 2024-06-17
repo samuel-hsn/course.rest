@@ -26,7 +26,27 @@ class Places {
       },
       "required": ["author", "review", "name"]
     };
+    var placePatchSchema = {
+      "id": "/Place",
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "object",
+          "properties": {
+            "url": {"type": "string",  "pattern": "(https|http):?:\/\/.*"},
+            "title": {"type": "string", "minLength": 3, "maxLength": 100}
+          },
+          "required": ["url", "title"],
+          "additionalProperties": false
+        },
+        "author": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'},
+        "review": {"type": "integer", "minimum": 0, "maximum": 9},
+        "name": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'}
+      },
+      "additionalProperties": false
+    };
     placeValidator.addSchema(placeSchema);
+    placeValidator.addSchema(placePatchSchema);
 
     app.get("/api/places/:id", async (request, response) => {
       let id = request.params.id;
@@ -99,6 +119,29 @@ class Places {
         return response.status(204).send();
       }
       return response.status(201).send();
+    });
+
+    app.patch("/api/places/:id", async (request, response) => {
+      //validate request :
+      let id = request.params.id;
+      const place = await data.getPlaceAsync(id);
+      if (place === undefined) {
+        response.status(404).json({key: "entity.not.found"});
+        return;
+      }
+
+      var validatorResult = placeValidator.validate(request.body, placePatchSchema);
+      if (!validatorResult.valid) {
+        return response.status(400).json({
+          errors: validatorResult.errors.map(error => error.stack)
+        });
+      }
+
+      Object.assign(place, request.body);
+
+      let savedId = await data.savePlaceAsync(place);
+      response.setHeader("Location", `/api/places/${savedId}`);
+      return response.status(204).send();
     });
 
   }
