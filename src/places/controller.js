@@ -1,3 +1,5 @@
+const { applyPatch } = require('fast-json-patch');
+
 class Places {
   constructor(data) {
     this.data = data;
@@ -132,12 +134,17 @@ class Places {
 
       var validatorResult = placeValidator.validate(request.body, placePatchSchema);
       if (!validatorResult.valid) {
-        return response.status(400).json({
-          errors: validatorResult.errors.map(error => error.stack)
-        });
+        try {
+          applyPatch(place, request.body, true);
+        } catch (error) {
+          return response.status(400).json({
+            errors: validatorResult.errors.map(error => error.stack)
+          });
+        }
+        
+      } else {
+        Object.assign(place, request.body);
       }
-
-      Object.assign(place, request.body);
 
       let savedId = await data.savePlaceAsync(place);
       response.setHeader("Location", `/api/places/${savedId}`);

@@ -200,6 +200,18 @@ describe("Places/controller", () => {
             .expect('Content-Type', /json/)
             .expect(400);
     });
+
+    it('PATCH /api/places/2 should respond a http 204', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        var body = [
+            { "op": "replace", "path": "/name", "value": "Saint-brieuc" },
+            { "op": "replace", "path": "/author", "value": "Robert" }
+          ];
+        return request(app)
+            .patch('/api/places/2')
+            .send(body)
+            .expect(204);
+    });
     
 
     it('DELETE /api/places/1 should respond a http 200 KO', () => {
