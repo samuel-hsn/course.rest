@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const packageJson = require('../package.json');
+const Files = require('./files/controller');
 
 class App {
     constructor(place) {
@@ -9,7 +10,9 @@ class App {
         app.use(bodyParser.urlencoded({
             extended: true
         }));
-        app.use(bodyParser.json());
+        app.use(bodyParser.json({
+            type: ['application/json', 'application/json-patch+json']
+          }));
 
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
@@ -33,7 +36,10 @@ class App {
             });
         });
 
-        
+        //Middleware pour l'upload de fichier
+        const files = new Files();
+        files.configure(app);
+
         var NotFoundMiddleware = function (request, response, next) {
             response.status(404).json({
                 key: 'not.found'
@@ -49,6 +55,8 @@ class App {
             });
         });
         this.app=app;
+
+
     }
     
 }
