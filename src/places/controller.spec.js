@@ -14,6 +14,16 @@ describe("Places/controller", () => {
         expect(response.body.author).toBe("Louis");
       });
   });
+  it("GET /api/places/1 should respond a http 200 OK", () => {
+    const app = new App(new Place(new PlaceData())).app;
+    return request(app)
+      .get("/api/places/1")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(response => {
+        expect(response.body.author).toBe("Patrick");
+      });
+  });
 
   it("GET /api/places/youhou should respond a http 404", () => {
     const app = new App(new Place(new PlaceData())).app;
@@ -118,24 +128,6 @@ describe("Places/controller", () => {
 
     });
 
-    it('DELETE /api/places/1 should respond a http 200 KO', () => {
-        const app = new App(new Place(new PlaceData())).app;
-        return request(app)
-            .delete('/api/places/1')
-            .expect('Location', /places/)
-            .expect(200);
-    });
-    it('DELETE /api/places/0 should respond a http 404 KO', () => {
-        const app = new App(new Place(new PlaceData())).app;
-        return request(app)
-            .delete('/api/places/0')
-            .expect('Content-Type', /json/)
-            .expect(404)
-            .then(response => {
-                expect(response.body.error).toBe("Place not found");
-            });;
-    });
-
     it('PUT /api/places/1 should respond a http 204 OK - No Content', () => {
         const app = new App(new Place(new PlaceData())).app;
         var newPlace = {
@@ -172,4 +164,22 @@ describe("Places/controller", () => {
             .expect(201);
     });
     
+
+    it('DELETE /api/places/1 should respond a http 200 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/1')
+            .expect('Location', /places/)
+            .expect(200);
+    });
+    it('DELETE /api/places/0 should respond a http 404 KO', () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .delete('/api/places/0')
+            .expect('Content-Type', /json/)
+            .expect(404)
+            .then(response => {
+                expect(response.body.error).toBe("Place not found");
+            });;
+    });
 });

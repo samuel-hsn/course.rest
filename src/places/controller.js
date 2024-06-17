@@ -90,7 +90,7 @@ class Places {
         });
       }
 
-      var originalPlace = await data.getPlaceAsync(id);
+      const originalPlace = await data.getPlaceAsync(id);
       
       request.body.id = id;
       const createdId = await data.savePlaceAsync(request.body);
