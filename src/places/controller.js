@@ -34,6 +34,16 @@ class Places {
     app.get("/api/places", async (request, response) => {
       const places = await data.getPlacesAsync();
       if (places !== undefined) {
+        const q = request.query.name;
+        if (q !== undefined) {
+          const placesFiltered = places.filter(place => place.name.toLowerCase().includes(q.toLowerCase()));
+          if(placesFiltered.length) {
+            response.status(200).json(placesFiltered);
+            return;
+          }
+          response.status(404).json({key: "entity.not.found"});
+          return
+        }
         response.status(200).json(places);
         return;
       }

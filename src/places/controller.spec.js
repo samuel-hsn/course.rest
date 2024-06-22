@@ -40,7 +40,39 @@ describe("Places/controller", () => {
 //             });
 //     });
 
-//     /** FIN GET **/
+    it("GET /api/places?name=Lo should respond a http 200 OK", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places?name=Lo")
+            .expect("Content-Type", /json/)
+            .expect(200)
+            .then(response => {
+                expect(response.body.length).toBe(2);
+                expect(response.body[0].name).toBe("Londre");
+                expect(response.body[1].name).toBe("Ploufragan");
+            });
+    });
+    it("GET /api/places?name=Lens should respond a http 200 OK", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places?name=Lens")
+            .expect("Content-Type", /json/)
+            .expect(200)
+            .then(response => {
+                expect(response.body.length).toBe(1);
+                expect(response.body[0].name).toBe("Lens");
+            });
+    });
+    it("GET /api/places?name=raaaah should respond a http 404 KO", () => {
+        const app = new App(new Place(new PlaceData())).app;
+        return request(app)
+            .get("/api/places?name=raaaah")
+            .expect("Content-Type", /json/)
+            .expect(404)
+    });
+
+
+/** FIN GET **/
 
 //     /************* POST REQUESTS ********************************************/ 
 //     it('POST /api/places should respond a http 201 OK with no image', () => {

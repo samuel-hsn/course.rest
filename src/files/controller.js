@@ -6,15 +6,17 @@ class Files {
   constructor() {}
   configure(app) {
     app.use(fileUpload());
-
+    
     app.post("/api/files", (request, response) => {
       if (!request.files) {
         return request.status(400).send("No files were uploaded.");
       }
-      let file = request.files.image;
-      let id = uuidV1();
+      let file = request.files.image; // to send a file in the request, the key must be 'image'
+      console.log(file);
+      let id = uuidv1();
       var filename = id + "_" + file.name;
       let filePath = path.join(__dirname, "/uploads", filename);
+      console.log(filePath);
       file.mv(filePath, function(err) {
         if (err) {
           return response.status(500).send(err);

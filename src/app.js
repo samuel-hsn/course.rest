@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const packageJson = require('../package.json');
 
 class App {
-    constructor(place) {
+    constructor(place, files) {
         const app = express();
 
         app.use(bodyParser.urlencoded({
@@ -22,7 +22,8 @@ class App {
             next();
         };
         app.use(middlewareHttp);
-        
+
+        if(files!==undefined) files.configure(app);
         place.configure(app);
 
         app.get('/api/version', function (request, response) {
