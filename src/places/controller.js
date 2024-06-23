@@ -39,14 +39,28 @@ class Places {
       response.status(404).json({ key: "entity.not.found" });
     });
 
-    app.get("/api/places", async (request, response) => {
+    /*app.get("/api/places", async (request, response) => {
       const places = await data.getPlacesAsync();
       if (places !== undefined) {
         response.status(200).json(places);
         return;
       }
       response.status(404).json({ key: "entity.not.found" });
-    });
+    });*/
+
+    //Query String 
+    app.get('/api/places', async (request, response) => {
+      const { name } = request.query;
+      
+      // Filtrer les places par nom (insensible à la casse)
+      let places = await data.getPlacesAsync();
+      if (name) {
+        const regex = new RegExp(name, 'i'); // 'i' pour l'insensibilité à la casse
+        places = places.filter(place => regex.test(place.name));
+      }
+      
+      response.json(places);
+  });
 
     app.post("/api/places", async (request, response) => {
 

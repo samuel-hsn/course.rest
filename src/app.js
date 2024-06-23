@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const packageJson = require('../package.json');
 
 class App {
-    constructor(place) {
-        const app = express();
-
+    constructor(place, files) {
+                const app = express();
+        
         app.use(bodyParser.urlencoded({
             extended: true
         }));
@@ -24,6 +24,9 @@ class App {
         app.use(middlewareHttp);
 
         place.configure(app);
+        if (files) {
+            files.configure(app);
+        }
 
         app.get('/api/version', function (request, response) {
             response.json({

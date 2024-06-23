@@ -268,18 +268,63 @@ describe("Places/controller", () => {
     //Partie 13 : Utilisation de Patch 
     it('Patch /api/places/2 should update only specified properties', async () => {
         const app = new App(new Place(new PlaceData())).app;
-    
+
         const patchData = [
             { "op": "replace", "path": "/name", "value": "Saint-brieuc" },
             { "op": "replace", "path": "/author", "value": "Robert" }
         ];
-    
+
         await request(app)
-          .patch('/api/places/1')
-          .set('Content-Type', 'application/json-patch+json')
-          .send(patchData)
-          .expect('Content-Type', /json/)
-          .expect(200)
-      });
+            .patch('/api/places/1')
+            .set('Content-Type', 'application/json-patch+json')
+            .send(patchData)
+            .expect('Content-Type', /json/)
+            .expect(200)
+    });
+
+    //Partie 15
+    it('should respond with places filtered by name query', async () => {
+        const app = new App(new Place(new PlaceData())).app;
+        const data = new PlaceData();
+
+        // Créer des places initiales pour le test
+        const places = [
+            { id: '1', name: 'Paris' },
+            { id: '2', name: 'London' },
+            { id: '3', name: 'New York' },
+            { id: '4', name: 'Tokyo' },
+            { id: '5', name: 'Sydney' },
+        ];
+        await Promise.all(places.map(place => data.savePlaceAsync(place)));
+
+        // Effectuer une requête GET avec query string pour filtrer par nom
+        const response = await request(app)
+            .get('/api/places')
+            .query({ name: 'Yo' }) // Exemple de recherche par nom
+            .expect('Content-Type', /json/)
+            .expect(200);
+    });
+
+    it('should respond with all places if no name query is provided', async () => {
+        const app = new App(new Place(new PlaceData())).app;
+        const data = new PlaceData();
+
+        // Créer des places initiales pour le test
+        const places = [
+            { id: '1', name: 'Paris' },
+            { id: '2', name: 'London' },
+            { id: '3', name: 'New York' },
+            { id: '4', name: 'Tokyo' },
+            { id: '5', name: 'Sydney' },
+        ];
+        await Promise.all(places.map(place => data.savePlaceAsync(place)));
+
+        // Effectuer une requête GET sans query string pour récupérer toutes les places
+        const response = await request(app)
+            .get('/api/places')
+            .expect('Content-Type', /json/)
+            .expect(200);
+    });
+
 
 });
