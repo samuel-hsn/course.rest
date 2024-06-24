@@ -8,6 +8,8 @@ lib-cov
 *.gz
 *-debug.log.*
 
+**/desktop.ini
+
 pids
 logs
 results
