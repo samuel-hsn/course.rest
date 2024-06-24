@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const packageJson = require("../package.json");
 
 class App {
-  constructor(places, files) {
+  constructor(places, files, users) {
     const app = express();
 
     app.use(
@@ -16,6 +16,14 @@ class App {
     var middlewareHttp = function(request, response, next) {
       response.setHeader("Accept", "application/json");
       response.setHeader("Api-version", packageJson.version);
+      response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+      response.setHeader("Access-Control-Allow-Headers", "my-header-custom, Content-Type");
+
+      if (request.method === 'GET') {
+        response.setHeader("Cache-Control", "private, max-age=15");
+      } else if (request.method === 'OPTIONS') {
+        response.setHeader("Cache-Control", "private, max-age=30");
+      }
 
       console.log(`${request.method} ${request.originalUrl}`);
       if (request.body && Object.keys(request.body).length > 0) {
@@ -30,6 +38,9 @@ class App {
     }
     if (places) {
       places.configure(app);
+    }
+    if (users) {
+      users.configure(app);
     }
 
     app.get("/api/version", function(request, response) {
