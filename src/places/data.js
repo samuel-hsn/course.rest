@@ -23,7 +23,8 @@ class Data {
 
   async getPlacesAsync() {
     const data = await _loadAsync(this._data);
-    return _.cloneDeep(data.places);
+    //return _.cloneDeep(data.places);
+    return _.cloneDeep(data);
   }
 
   async getPlaceAsync(id) {

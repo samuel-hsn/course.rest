@@ -19,7 +19,7 @@
 	  "author" : "Guillaume",
 	  "review" : 3,
       "image":{
-          "url": "http://localhost:8081/api/files/7577fcc0-0580-11e7-a2b8-5dcb02604871_hackathon.PNG",
+          "url": "http://localhost:8081/api/files/0eaed920-30d2-11ef-97da-93f55c5e37cc_cat1.gif",
           "title": "Lieu naturel"
       }
    }]

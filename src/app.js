@@ -14,6 +14,11 @@ class App {
         var middlewareHttp = function (request, response, next) {
             response.setHeader('Api-version', packageJson.version);
             response.setHeader('Content-Type', 'application/json');
+            response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            response.setHeader('Access-Control-Allow-Headers', 'content-type, my-header-custom, Location');
+            if (request.method === 'GET') response.setHeader('Cache-Control', 'max-age=15');
+            if (request.method === 'OPTIONS') response.setHeader('Cache-Control', 'max-age=30');
 
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
@@ -31,6 +36,18 @@ class App {
                 version: packageJson.version
             });
         });
+
+        // app.post('/api/login', function (request, response) {
+        //     const body = request.body;
+        //     if (body.username === 'admin' && body.password === 'admin') {
+        //         response.status(200)
+        //     }
+        //     else {
+        //         response.status(401).json({
+        //             key: 'login.failed'
+        //         });
+        //     }
+
 
         app.get('/api/*', function (request, response) {
             response.status(404).json({
