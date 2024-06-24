@@ -9,8 +9,23 @@ class Places {
   }
   configure(app) {
     const data = this.data;
+
+    app.options("/api/places/", function(request, response) {
+
+      response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+      response.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Custom-Header, my-header-custom, cache-control');
+
+
+      response.setHeader("Allow", "GET, POST, OPTIONS");
+      response.setHeader("Content-Length", "0");
+      response.status(200).end();
+    });
+
     app.get("/api/places", async function(request, response) {
     const places = await data.getPlacesAsync();
+    response.setHeader("Access-Control-Allow-Origin", 'http://127.0.0.1:3000');
+
       response.json({
         places: places
       });
@@ -42,7 +57,8 @@ class Places {
 
     app.post("/api/places", async function(request, response) {
       let newPlace = request.body;
-
+      response.setHeader("Access-Control-Allow-Origin", 'http://127.0.0.1:3000');
+      
       var placeSchema = {
         "id": "/Place",
         "type": "object",

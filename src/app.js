@@ -1,6 +1,18 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
+const expressJwt = require('express-jwt');
+
 const bodyParser = require("body-parser");
 const packageJson = require("../package.json");
+
+const JWT_SECRET = 'secret_key';
+
+// Utilisateur en dur
+const user = {
+    username: 'gaston',
+    password: 'password'
+};
+
 
 class App {
   constructor(places, files) {
@@ -16,6 +28,8 @@ class App {
     var middlewareHttp = function(request, response, next) {
       response.setHeader("Accept", "application/json");
       response.setHeader("Api-version", packageJson.version);
+      response.setHeader('Cache-control', 'public, max-age=15');
+      response.setHeader('Access-Control-Max-Age', '30');
 
       console.log(`${request.method} ${request.originalUrl}`);
       if (request.body && Object.keys(request.body).length > 0) {
