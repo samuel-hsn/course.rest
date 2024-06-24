@@ -1,22 +1,37 @@
 const jsonpatch = require('fast-json-patch');
 const Validator = require('jsonschema').Validator;
 
-const regexurl="(https|http):?:\/\/.*";
+const regexurl = "(https|http):?:\/\/.*";
 
 class Places {
   constructor(data) {
     this.data = data;
   }
   configure(app) {
+
     const data = this.data;
-    app.get("/api/places", async function(request, response) {
-    const places = await data.getPlacesAsync();
+
+    app.options("/api/places/", function (request, response) {
+      response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+      response.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Language, Custom-Header');
+      response.setHeader('Access-Control-Max-Age', '30');
+
+      response.setHeader("Allow", "GET, POST, OPTIONS");
+      response.setHeader("Content-Length", "0");
+      response.status(200).send();
+    });
+
+    app.get("/api/places", async function (request, response) {
+      response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+      response.setHeader('Cache-Control', 'max-age=15');
+      const places = await data.getPlacesAsync();
       response.json({
         places: places
       });
     });
 
-    app.get("/api/places/:id", async function(request, response) {
+    app.get("/api/places/:id", async function (request, response) {
       const id = request.params.id;
       const place = await data.getPlaceAsync(id);
       if (place !== undefined) {
@@ -28,7 +43,7 @@ class Places {
       });
     });
 
-    app.delete("/api/places/:id", async function(request, response) {
+    app.delete("/api/places/:id", async function (request, response) {
       const id = request.params.id;
       const success = await data.deletePlaceAsync(id);
       if (success) {
@@ -40,7 +55,9 @@ class Places {
       }
     });
 
-    app.post("/api/places", async function(request, response) {
+    app.post("/api/places", async function (request, response) {
+      response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+      
       let newPlace = request.body;
 
       var placeSchema = {
@@ -48,16 +65,16 @@ class Places {
         "type": "object",
         "properties": {
           "image": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
-              "url": {"type": "string",  "pattern": regexurl},
-              "title": {"type": "string", "minLength": 3, "maxLength": 100}
+              "url": { "type": "string", "pattern": regexurl },
+              "title": { "type": "string", "minLength": 3, "maxLength": 100 }
             },
             "required": ["url", "title"]
           },
-          "author": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'},
-          "review": {"type": "integer", "minimum": 1, "maximum": 9},
-          "name": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'}
+          "author": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' },
+          "review": { "type": "integer", "minimum": 1, "maximum": 9 },
+          "name": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' }
         },
         "required": ["author", "review", "name"]
       };
@@ -75,12 +92,12 @@ class Places {
       response.status(201).json();
     });
 
-    app.put("/api/places/:id", async function(request, response) {
+    app.put("/api/places/:id", async function (request, response) {
       let id = request.params.id;
       console.log(`put /api/places/:id called with id ${id}`);
 
       const newPlace = request.body;
-      
+
       var placeSchema = {
         "id": "/Place",
         "type": "object",
@@ -88,14 +105,14 @@ class Places {
           "image": {
             "type": "object",
             "properties": {
-              "url": {"type": "string",  "pattern": regexurl},
-              "title": {"type": "string", "minLength": 3, "maxLength": 100}
+              "url": { "type": "string", "pattern": regexurl },
+              "title": { "type": "string", "minLength": 3, "maxLength": 100 }
             },
             "required": ["image", "title"]
           },
-          "author": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'},
-          "review": {"type": "integer", "minimum": 1, "maximum": 9},
-          "name": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'}
+          "author": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' },
+          "review": { "type": "integer", "minimum": 1, "maximum": 9 },
+          "name": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' }
         },
         "required": ["author", "review", "name"]
       };
@@ -117,11 +134,11 @@ class Places {
       }
     });
 
-    app.patch("/api/places/:id", async function(request, response) {
+    app.patch("/api/places/:id", async function (request, response) {
 
       let id = request.params.id;
       console.log(`patch /api/places/:id called with id ${id}`);
-      if(request.get('content-type') === 'application/json-patch+json') {
+      if (request.get('content-type') === 'application/json-patch+json') {
         // Manage json patch
         const patch = request.body;
         const place = await data.getPlaceAsync(id);
@@ -135,49 +152,49 @@ class Places {
         await data.savePlaceAsync(newPlace);
         response.status(204).json();
 
-      } else {     
-          const newData = request.body
+      } else {
+        const newData = request.body
 
-          var placeSchema = {
-            "id": "/Place",
-            "type": "object",
-            "properties": {
-              "image": {
-                "type": "object",
-                "properties": {
-                  "url": {"type": "string",  "pattern": regexurl},
-                  "title": {"type": "string", "minLength": 3, "maxLength": 100}
-                },
-                "required": ["image", "title"]
+        var placeSchema = {
+          "id": "/Place",
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string", "pattern": regexurl },
+                "title": { "type": "string", "minLength": 3, "maxLength": 100 }
               },
-              "author": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'},
-              "review": {"type": "integer", "minimum": 1, "maximum": 1},
-              "name": {"type": "string", "minLength": 3, "maxLength": 100, pattern:'^[a-zA-Z -]*$'}
+              "required": ["image", "title"]
             },
-            "required": []
-          };
+            "author": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' },
+            "review": { "type": "integer", "minimum": 1, "maximum": 1 },
+            "name": { "type": "string", "minLength": 3, "maxLength": 100, pattern: '^[a-zA-Z -]*$' }
+          },
+          "required": []
+        };
 
-          var validator = new Validator();
-          var validationResult = validator.validate(newData, placeSchema)
+        var validator = new Validator();
+        var validationResult = validator.validate(newData, placeSchema)
 
-          if (validationResult.errors.length > 0) {
-            response.status(400).json(validationResult.errors);
-            return;
-          }
-
-          const place = await data.getPlaceAsync(id);
-          if (place === undefined) {
-            response.status(404).json({
-              message: "entity.not.found"
-            });
-            return;
-          }
-          Object.assign(place, newData);
-          await data.savePlaceAsync(place);
-          response.status(204).json();
+        if (validationResult.errors.length > 0) {
+          response.status(400).json(validationResult.errors);
+          return;
         }
-      });
-      
+
+        const place = await data.getPlaceAsync(id);
+        if (place === undefined) {
+          response.status(404).json({
+            message: "entity.not.found"
+          });
+          return;
+        }
+        Object.assign(place, newData);
+        await data.savePlaceAsync(place);
+        response.status(204).json();
+      }
+    });
+
   }
 }
 module.exports = Places;
