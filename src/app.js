@@ -15,6 +15,11 @@ class App {
             response.setHeader('Api-version', packageJson.version);
             response.setHeader('Content-Type', 'application/json'); // Ajout de l'en-tête Content-Type
 
+            response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, my-header-custom');
+            response.setHeader('Cache-Control', 'max-age=15');
+
             console.log(`${request.method} ${request.originalUrl}`);
             if (request.body && Object.keys(request.body).length >0) {
                 console.log(`request.body ${JSON.stringify(request.body)}`);

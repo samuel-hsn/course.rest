@@ -1,4 +1,4 @@
-  const _ = require("lodash");
+const _ = require("lodash");
 const { v1: uuidv1 } = require("uuid");
 const jsonData = require("./data.json");
 const { Validator } = require('jsonschema');
@@ -70,7 +70,7 @@ class Data {
 
   async getPlacesAsync() {
     const data = await _loadAsync(this._data);
-    return _.cloneDeep(data.places);
+    return _.cloneDeep(data);
   }
 
   async getPlaceAsync(id) {

@@ -8,6 +8,11 @@ class Places {
   configure(app) {
     const data = this.data;
 
+    app.options("/api/places", async (request, response) => {
+      const places = await data.getPlacesAsync();
+      response.status(200).json(places);
+    });
+
     app.get("/api/places/all", async (request, response) => {
       const places = await data.getPlacesAsync();
       response.status(200).json(places.length);
@@ -24,7 +29,7 @@ class Places {
     });
 
     // Nouvelle route pour ajouter une place
-    app.post("/api/places", async (request, response) => {
+    app.options("/api/places", async (request, response) => {
       const newPlace = request.body;
       try {
         const createdPlace = await data.savePlaceAsync(newPlace);
