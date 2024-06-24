@@ -1,4 +1,4 @@
-const { v4: uuidv1 } = require("uuid");
+const uuid = require("uuid");
 const fileUpload = require("express-fileupload");
 const path = require("path");
 
@@ -11,8 +11,8 @@ class Files {
       if (!request.files) {
         return request.status(400).send("No files were uploaded.");
       }
-      let file = request.files.image;
-      let id = uuidV1();
+      let file = request.files;
+      let id = uuid.v1();
       var filename = id + "_" + file.name;
       let filePath = path.join(__dirname, "/uploads", filename);
       file.mv(filePath, function(err) {

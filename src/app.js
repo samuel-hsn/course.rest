@@ -16,6 +16,12 @@ class App {
     var middlewareHttp = function(request, response, next) {
       response.setHeader("Accept", "application/json");
       response.setHeader("Api-version", packageJson.version);
+      response.setHeader("Access-Control-Max-Age", "30"); //secondes
+      response.setHeader("Cache-Control", "public, max-age=15"); //secondes
+      // à faire plutot par route : 
+      response.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+      response.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Custom-Header, my-header-custom, Cache-Control');
 
       console.log(`${request.method} ${request.originalUrl}`);
       if (request.body && Object.keys(request.body).length > 0) {
