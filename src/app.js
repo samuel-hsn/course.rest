@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const packageJson = require('../package.json');
 
 class App {
-    constructor(place) {
+    constructor(place, file) {
         const app = express();
 
         app.use(bodyParser.urlencoded({
@@ -23,8 +23,10 @@ class App {
         app.use(middlewareHttp);
 
         place.configure(app);
+        file.configure(app);
 
         app.get('/api/version', function (request, response) {
+            response.set('Content-Type', 'application/json');
             response.json({
                 version: packageJson.version
             });
@@ -35,6 +37,12 @@ class App {
             console.error(error.stack);
             response.status(500).json({
                 key: 'server.error'
+            });
+        });
+
+        app.get('*', function(request, response) {
+            response.json({
+                key: "not found"
             });
         });
         this.app=app;
